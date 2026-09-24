@@ -3,7 +3,7 @@ from database import get_connection
 
 app = FastAPI(
     title="Clase SSR",
-    description="Primera conexion entre FASTAPI y Postgres",
+    description="Tarea creación de tablas",
     version="1.0"
 )
 
@@ -25,29 +25,59 @@ def probar_base_datos():
     except Exception as error:
         raise HTTPException(
             status_code=500,
-            detail=f"No fue posible conectarse con Postgres {error}"
+            detail=f"No fue posible conectarse con Postgres: {error}"
         )
 
-@app.get("/estudiantes")
-def obtener_estudiantes():
+@app.get("/personal")
+def obtener_personal():
     try:
         with get_connection() as connection:
             with connection.cursor() as cursor:
                 cursor.execute("""
-                    SELECT
-                        id,
-                        nombre,
-                        correo,
-                        creado_en
-                    FROM estudiantes
+                    SELECT id, nombre, area, turno
+                    FROM personal
                     ORDER BY id;
                 """)
-                
-                estudiantes = cursor.fetchall()
-                return estudiantes
-            
+                personal = cursor.fetchall()
+                return personal
     except Exception as error:
         raise HTTPException(
             status_code=500,
-            detail=f"Error al consultar estudiantes {error}"
+            detail=f"Error al consultar personal: {error}"
+        )
+
+@app.get("/maestros")
+def obtener_maestros():
+    try:
+        with get_connection() as connection:
+            with connection.cursor() as cursor:
+                cursor.execute("""
+                    SELECT id, nombre, correo, turno
+                    FROM maestros
+                    ORDER BY id;
+                """)
+                maestros = cursor.fetchall()
+                return maestros
+    except Exception as error:
+        raise HTTPException(
+            status_code=500,
+            detail=f"Error al consultar maestros: {error}"
+        )
+
+@app.get("/personal")
+def obtener_personal():
+    try:
+        with get_connection() as connection:
+            with connection.cursor() as cursor:
+                cursor.execute("""
+                    SELECT id, nombre, area, turno
+                    FROM personal
+                    ORDER BY id;
+                """)
+                personal = cursor.fetchall()
+                return personal
+    except Exception as error:
+        raise HTTPException(
+            status_code=500,
+            detail=f"Error al consultar personal: {error}"
         )
